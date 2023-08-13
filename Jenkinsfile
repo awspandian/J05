@@ -16,7 +16,7 @@ pipeline {
 		stage ('Docker Image Build'){
 		    steps {
                 script {
-                    app = docker.build("dockerpandian/jly")
+                    app = docker.build("dockerpandian/a13")
                     app.inside {
                         sh 'echo $(curl localhost:8080)'
                     }
@@ -41,14 +41,14 @@ pipeline {
                 milestone(1)
                 withCredentials([usernamePassword(credentialsId: 'web', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
                     script {
-                        sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker pull dockerpandian/jly:${env.BUILD_NUMBER}\""
+                        sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker pull dockerpandian/a13:${env.BUILD_NUMBER}\""
                         try {
                             sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker stop azcs\""
                             sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker rm azcs\""
                         } catch (err) {
                             echo: 'caught error: $err'
                         }
-                        sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker run --restart always --name azcs -p 8080:8080 -d dockerpandian/jly:${env.BUILD_NUMBER}\""
+                        sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker run --restart always --name azcs -p 8080:8080 -d dockerpandian/a13:${env.BUILD_NUMBER}\""
                     }
                 }
             }
